@@ -47,6 +47,7 @@ gem "bootsnap", require: false
 gem "rubocop-rails"
 gem "rubocop-rspec"
 
+gem 'bcrypt', '~> 3.1.7'
 gem 'rtesseract'
 
 group :development, :test do
