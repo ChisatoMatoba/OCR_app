@@ -10,11 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_03_074132) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_03_082111) do
   create_table "images", force: :cascade do |t|
     t.integer "page_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  create_table "texts", force: :cascade do |t|
+    t.integer "image_id", null: false
+    t.text "content"
+    t.text "fixed_content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["image_id"], name: "index_texts_on_image_id"
+  end
+
+  add_foreign_key "texts", "images"
 end
