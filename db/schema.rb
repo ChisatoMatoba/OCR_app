@@ -12,18 +12,20 @@
 
 ActiveRecord::Schema[7.1].define(version: 2024_02_03_083131) do
   create_table "books", force: :cascade do |t|
-    t.integer "image_id", null: false
+    t.integer "user_id", null: false
     t.string "book_name", null: false
     t.integer "status", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["image_id"], name: "index_books_on_image_id"
+    t.index ["user_id"], name: "index_books_on_user_id"
   end
 
   create_table "images", force: :cascade do |t|
-    t.integer "page_number"
+    t.integer "page_number", null: false
+    t.integer "book_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_images_on_book_id"
   end
 
   create_table "texts", force: :cascade do |t|
@@ -36,12 +38,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_03_083131) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "login_name"
-    t.string "password_digest"
+    t.string "login_name", null: false
+    t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  add_foreign_key "books", "images"
+  add_foreign_key "books", "users"
+  add_foreign_key "images", "books"
   add_foreign_key "texts", "images"
 end
