@@ -1,0 +1,17 @@
+<%= form_with model: @book, local: true do |f| %>
+  <%= render 'application/errors', object: @book %>
+
+  <div class="form-group">
+    <%= f.label :book_name %>
+    <%= f.text_field :book_name, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :status %>
+    <%= f.select :status, Book.statuses.keys.map { |status| [status.humanize, status] }, {}, {class: "form-control"} %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "登録", class: "btn btn-primary" %>
+  </div>
+<% end %>
