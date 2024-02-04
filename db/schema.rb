@@ -10,14 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_03_083131) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_03_082345) do
   create_table "books", force: :cascade do |t|
-    t.integer "user_id", null: false
     t.string "book_name", null: false
     t.integer "status", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_books_on_user_id"
   end
 
   create_table "images", force: :cascade do |t|
@@ -37,14 +35,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_03_083131) do
     t.index ["image_id"], name: "index_texts_on_image_id"
   end
 
-  create_table "users", force: :cascade do |t|
-    t.string "login_name", null: false
-    t.string "password_digest", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_foreign_key "books", "users"
   add_foreign_key "images", "books"
   add_foreign_key "texts", "images"
 end
