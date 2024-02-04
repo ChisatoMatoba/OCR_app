@@ -47,7 +47,12 @@ gem "bootsnap", require: false
 gem "rubocop-rails"
 gem "rubocop-rspec"
 
+gem 'bcrypt', '~> 3.1.7'
 gem 'rtesseract'
+
+gem 'bootstrap'
+gem 'sassc-rails'
+
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
