@@ -3,6 +3,13 @@ class BooksController < ApplicationController
     @books = Book.all
   end
 
+  def show
+    @book = Book.includes(:images).find(params[:id])
+    @book = Book.includes(:images).where(id: params[:id])
+                .order('images.page_number ASC')
+                .references(:images).first
+  end
+
   def new
     @book = Book.new
   end
@@ -14,10 +21,6 @@ class BooksController < ApplicationController
     else
       render :new, status: :unprocessable_entity
     end
-  end
-
-  def show
-    @book = Book.find(params[:id])
   end
 
   private
