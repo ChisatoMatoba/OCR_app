@@ -4,7 +4,7 @@ class Image < ApplicationRecord
   has_one_attached :image
 
   with_options presence: true do
-    validates :content
-    validates :fixed_content
+    validates :page_number
+    validates :image
   end
 end
