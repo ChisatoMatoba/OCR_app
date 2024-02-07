@@ -14,9 +14,12 @@ document.addEventListener('turbo:load', () => {
     dropzone.style.backgroundColor = '#ffffff'; // 背景色を戻す
   });
 
+  let droppedFiles = [];
   // ファイルがドロップされたときの処理
-  dropzone.addEventListener('drop', async (e) => {
+  dropzone.addEventListener('drop', (e) => {
     e.preventDefault();
+    droppedFiles = e.dataTransfer.files; // ドロップされたファイルを保存
+
     dropzone.style.backgroundColor = '#ffffff'; // 背景色を戻す
     fileInput.files = e.dataTransfer.files; // ドロップされたファイルをinput要素に設定
 
@@ -29,9 +32,12 @@ document.addEventListener('turbo:load', () => {
       li.textContent = file.name; // ファイル名を設定
       fileList.appendChild(li); // リストに項目を追加
     });
+  });
 
+  // アップロードボタンのクリックイベントリスナー
+  document.getElementById('file_form').addEventListener('submit', async (e) => {
     // 同じファイル名の既存データが存在するかチェック
-    const files = e.dataTransfer.files;
+    const files = droppedFiles;
     for (const file of files) {
       const page_number = extractPageNumber(file.name);
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // CSRFトークン
@@ -45,6 +51,9 @@ document.addEventListener('turbo:load', () => {
           'X-CSRF-Token': csrfToken
         }
       });
+      if (!response.ok) {
+        throw new Error('Server responded with an error');
+      }
       const result = await response.json();
 
       if (result.exists) {
@@ -71,7 +80,7 @@ function extractPageNumber(filename) {
 }
 
 async function uploadFile(file, bookId, page_number, overwrite) {
-  const url = `/books/${bookId}/images/upload`; // サーバーのファイルアップロードエンドポイント
+  const url = `/books/${bookId}/images`; // サーバーのファイルアップロードエンドポイント
   const formData = new FormData();
   formData.append('file', file); // ファイルデータ
   formData.append('page_number', page_number); // ページ番号

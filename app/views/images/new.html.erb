@@ -1,9 +1,9 @@
 <script>
-  const bookImagesPath = "<%= book_images_path(@book) %>";
-  const bookId = "<%= @book.id %>";
+  // Identifier 'bookId' has already been declared対策でvarを使用
+  var bookId = "<%= @book.id %>";
 </script>
 
-<%= form_with model: @image, url: book_images_path, html: { multipart: true, id: "file_form" } do |form| %>
+<%= form_with model: @image, url: book_images_path(@book), html: { multipart: true, id: "file_form" } do |form| %>
   <%= form.hidden_field :book_id, value: @book.id %>
   <div id="dropzone" style="border: 2px dashed #ccc; padding: 20px; width: 300px; text-align: center;">
     ここにファイルをドラッグ＆ドロップ

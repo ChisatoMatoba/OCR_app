@@ -16,37 +16,35 @@ class ImagesController < ApplicationController
     render json: { exists: image_exists }
   end
 
-  def upload
-    # 上書きフラグがtrueの場合、既存の画像は削除してから画像保存処理へ
-    overwrite = params[:overwrite] == "true"
-    if overwrite && existing_image
-      existing_image.image.purge # 既存の画像を削除
-    end
-
-    # ファイル情報を受け取り、保存処理を行う
-    page_number = params[:page_number]
-    book_id = params[:bookId]
-    uploaded_file = params[:file]
-
-    # 保存処理
-    if page_number.present? && book_id.present? && uploaded_file.present?
-      image = Image.new(book_id: book_id, page_number: page_number)
-      image.image.attach(uploaded_file)
-
-      if image.valid? && image.save
-        render json: { message: "ファイルが正常にアップロードされました。" }, status: :ok
-      else
-        render json: { error: "ファイルの保存に失敗しました。" }, status: :unprocessable_entity
-      end
-    else
-      render json: { error: "ファイル情報が不足しています。" }, status: :unprocessable_entity
-    end
-  end
-
   def create
-    book_id = image_params[:book_id]
+    @book = Book.find_by(id: params[:book_id])
+    book_id = params[:book_id]
     uploaded_images = params[:image][:images].reject(&:blank?)
     saved_images_count = 0
+    book = Book.find_by(id: book_id)
+
+    uploaded_images.each do |uploaded_file|
+      page_number = extract_page_number(uploaded_file.original_filename)
+      existing_image = book.images.find_by(page_number: page_number)
+
+      # クライアントサイドからの上書きフラグを確認
+      if params[:overwrite] == "true"
+        if existing_image.present?
+          existing_image.image.purge # 既存の画像を削除
+        end
+        # 新しい画像を保存
+        image = book.images.build(page_number: page_number)
+        image.image.attach(uploaded_file)
+        saved_images_count += 1 if image.save
+      else
+        # 上書きしない場合、既存の画像があればスキップ
+        next if existing_image.present?
+        # 新しい画像を保存
+        image = book.images.build(page_number: page_number)
+        image.image.attach(uploaded_file)
+        saved_images_count += 1 if image.save
+      end
+    end
 
     if saved_images_count == uploaded_images.size
       redirect_to book_path(book_id), notice: '登録が完了しました'
@@ -62,5 +60,10 @@ class ImagesController < ApplicationController
 
   def image_params
     params.require(:image).permit(:page_number, images: []).merge(book_id: params[:book_id])
+  end
+
+  # ファイル名からページ番号を抽出
+  def extract_page_number(filename)
+    filename.split('.').first
   end
 end
