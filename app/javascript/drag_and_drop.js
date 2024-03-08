@@ -36,18 +36,19 @@ document.addEventListener('turbo:load', () => {
 
   // アップロードボタンのクリックイベントリスナー
   document.getElementById('file_form').addEventListener('submit', async (e) => {
+    e.preventDefault(); // フォームのデフォルトの送信を防ぐ
+
     // 同じファイル名の既存データが存在するかチェック
     const files = droppedFiles;
     for (const file of files) {
       const page_number = extractPageNumber(file.name);
+      const form = e.target;
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // CSRFトークン
 
       // サーバーにファイルの存在チェックを行う
-      const response = await fetch(`/books/${bookId}/images/check_existence`, {
+      const response = await fetch(`/books/${bookId}/images/check_existence?page_number=${page_number}`, {
         method: 'POST',
-        body: JSON.stringify({ page_number: page_number }),
         headers: {
-          'Content-Type': 'application/json',
           'X-CSRF-Token': csrfToken
         }
       });
