@@ -5,11 +5,10 @@ class BooksController < ApplicationController
 
   def show
     @book = Book.includes(:images).find_by(id: params[:id])
-    return render file: "#{Rails.root}/public/404.html", status: :not_found unless @book
+    return render file: Rails.public_path.join('404.html').to_s, status: :not_found unless @book
 
     @book.images.order('page_number ASC')
   end
-
 
   def new
     @book = Book.new

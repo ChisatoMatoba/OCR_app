@@ -19,7 +19,7 @@ class ImagesController < ApplicationController
   def create
     @book = Book.find_by(id: params[:book_id])
     book_id = params[:book_id]
-    uploaded_images = params[:image][:images].reject(&:blank?)
+    uploaded_images = params[:image][:images].compact_blank
     saved_images_count = 0
     book = Book.find_by(id: book_id)
 
@@ -28,22 +28,20 @@ class ImagesController < ApplicationController
       existing_image = book.images.find_by(page_number: page_number)
 
       # クライアントサイドからの上書きフラグを確認
-      if params[:overwrite] == "true"
+      if params[:overwrite] == 'true'
         if existing_image.present?
           existing_image.image.purge # 既存の画像を削除
         end
         # 新しい画像を保存
-        image = book.images.build(page_number: page_number)
-        image.image.attach(uploaded_file)
-        saved_images_count += 1 if image.save
-      else
-        # 上書きしない場合、既存の画像があればスキップ
-        next if existing_image.present?
-        # 新しい画像を保存
-        image = book.images.build(page_number: page_number)
-        image.image.attach(uploaded_file)
-        saved_images_count += 1 if image.save
+      elsif existing_image.present?
+        next
       end
+      # 上書きしない場合、既存の画像があればスキップ
+
+      # 新しい画像を保存
+      image = book.images.build(page_number: page_number)
+      image.image.attach(uploaded_file)
+      saved_images_count += 1 if image.save
     end
 
     if saved_images_count == uploaded_images.size
