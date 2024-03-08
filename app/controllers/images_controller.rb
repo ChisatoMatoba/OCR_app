@@ -1,6 +1,4 @@
 class ImagesController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:check_existence]
-
   def index
     @images = Image.includes(:book).all
   end
@@ -20,18 +18,17 @@ class ImagesController < ApplicationController
   end
 
   def create
-    @book = Book.find_by(id: params[:book_id])
     book_id = params[:book_id]
+    @book = Book.find_by(id: book_id)
     uploaded_images = image_params[:images].compact_blank
     saved_images_count = 0
-    book = Book.find_by(id: book_id)
 
     uploaded_images.each do |uploaded_file|
       page_number = extract_page_number(uploaded_file.original_filename)
-      existing_image = book.images.find_by(page_number: page_number)
+      existing_image = @book.images.find_by(page_number: page_number)
 
       # クライアントサイドからの上書きフラグを確認
-      if params[:overwrite] == 'true'
+      if params[:overwrite] == true
         if existing_image.present?
           existing_image.image.purge # 既存の画像を削除
         end
@@ -42,7 +39,7 @@ class ImagesController < ApplicationController
       # 上書きしない場合、既存の画像があればスキップ
 
       # 新しい画像を保存
-      image = book.images.build(page_number: page_number)
+      image = @book.images.build(page_number: page_number)
       image.image.attach(uploaded_file)
       saved_images_count += 1 if image.save
     end
