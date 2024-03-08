@@ -19,7 +19,7 @@ class ImagesController < ApplicationController
   def create
     @book = Book.find_by(id: params[:book_id])
     book_id = params[:book_id]
-    uploaded_images = params[:image][:images].compact_blank
+    uploaded_images = image_params[:images].compact_blank
     saved_images_count = 0
     book = Book.find_by(id: book_id)
 
