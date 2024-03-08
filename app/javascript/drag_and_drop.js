@@ -34,11 +34,7 @@ document.addEventListener('turbo:load', () => {
         fileList.appendChild(li); // リストに項目を追加
       });
     });
-  }
 
-  const fileForm = document.getElementById('file_form');
-
-  if (fileForm) {
     // アップロードボタンのクリックイベントリスナー
     document.getElementById('file_form').addEventListener('submit', async (e) => {
       e.preventDefault(); // フォームのデフォルトの送信を防ぐ

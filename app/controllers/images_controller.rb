@@ -9,9 +9,8 @@ class ImagesController < ApplicationController
   end
 
   def check_existence
-    data = JSON.parse(request.body.read)
     book_id = params[:book_id]
-    page_number = data['page_number']
+    page_number = params[:page_number]
     book = Book.find_by(id: book_id)
     image_exists = book.images.exists?(page_number: page_number)
     render json: { exists: image_exists }
