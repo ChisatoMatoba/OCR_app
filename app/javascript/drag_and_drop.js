@@ -85,9 +85,10 @@ function extractPageNumber(filename) {
 async function uploadFile(file, bookId, page_number, overwrite) {
   const url = `/books/${bookId}/images`; // サーバーのファイルアップロードエンドポイント
   const formData = new FormData();
-  formData.append('file', file); // ファイルデータ
-  formData.append('page_number', page_number); // ページ番号
-  formData.append('overwrite', overwrite); // 上書きフラグ
+  formData.append('image[file]', file); // ファイルデータ
+  formData.append('image[page_number]', page_number); // ページ番号
+  formData.append('image[overwrite]', overwrite); // 上書きフラグ
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // CSRFトークン
 
   try {
     const response = await fetch(url, {
