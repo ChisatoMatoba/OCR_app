@@ -4,10 +4,13 @@ class BooksController < ApplicationController
   end
 
   def show
-    @book = Book.includes(:images).find_by(id: params[:id])
+    @book = Book.eager_load(:images).find_by(id: params[:id])
     return render file: Rails.public_path.join('404.html').to_s, status: :not_found unless @book
 
-    @book.images.order('page_number ASC')
+    # 画像をページ番号の昇順で並べ替え、インスタンス変数に割り当てる
+    @images = @book.images.order('page_number ASC')
+
+    flash[:notice] = '登録が完了しました' if params[:notice].present?
   end
 
   def new

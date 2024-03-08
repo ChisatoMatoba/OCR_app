@@ -72,6 +72,8 @@ document.addEventListener('turbo:load', () => {
           await uploadFile(file, bookId, page_number, false);
         }
       }
+      // 全てのファイルの処理が完了した後にリダイレクト
+      window.location.href = `/books/${bookId}?notice=ok`;
     });
   }
 });
