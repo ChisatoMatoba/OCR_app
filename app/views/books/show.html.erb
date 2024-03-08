@@ -10,10 +10,12 @@
     </tr>
   </thead>
   <tbody>
+    <% @book.images.each do |image| %>
       <tr>
-        <td></td>
+        <td><%= image.page_number %></td>
         <td></td>
       </tr>
+    <% end %>
   </tbody>
 </table>
 

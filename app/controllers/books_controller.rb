@@ -3,6 +3,13 @@ class BooksController < ApplicationController
     @books = Book.all
   end
 
+  def show
+    @book = Book.includes(:images).find_by(id: params[:id])
+    return render file: Rails.public_path.join('404.html').to_s, status: :not_found unless @book
+
+    @book.images.order('page_number ASC')
+  end
+
   def new
     @book = Book.new
   end
@@ -14,10 +21,6 @@ class BooksController < ApplicationController
     else
       render :new, status: :unprocessable_entity
     end
-  end
-
-  def show
-    @book = Book.find(params[:id])
   end
 
   private
