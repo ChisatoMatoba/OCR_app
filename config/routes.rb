@@ -8,5 +8,7 @@ Rails.application.routes.draw do
         post :upload
       end
     end
+
+    resources :texts, only: [:index, :new, :create, :show]
   end
 end
