@@ -1,21 +1,30 @@
 <h1>本の詳細</h1>
 
-<%= link_to '画像を新しく登録する', new_book_image_path(@book), class: 'btn btn-primary mb-1' %>
+<%= link_to '画像を新しく登録する', new_book_image_path(@book), class: 'btn btn-warning mb-1' %>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">ページ</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @book.images.each do |image| %>
+  <table class="table table-bordered">
+    <thead>
       <tr>
-        <td><%= image.page_number %></td>
-        <td></td>
+        <th scope="col">ページ</th>
+        <th scope="col">画像</th>
+        <th scope="col">テキスト抽出</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
-
+    </thead>
+    <tbody>
+      <% @book.images.each do |image| %>
+        <tr>
+          <td class="col"><%= image.page_number %></td>
+          <td class="col-5"><%= image_tag(image.image, class: "d-block mx-auto img-thumbnail", alt: "No Image") %></td>
+          <td class="col-6">
+            <% if image.text.present? %>
+              <%= image.text.content %>
+            <% else %>
+              <%= form_tag(book_image_texts_path(@book, image), method: :post, id: 'ocr_form') do %>
+                <%= submit_tag 'この画像からテキストを抽出', class: 'btn btn-primary' %>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>

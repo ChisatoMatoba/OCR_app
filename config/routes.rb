@@ -7,6 +7,7 @@ Rails.application.routes.draw do
         post :check_existence
         post :upload
       end
+      resources :texts, only: [:index, :new, :create, :show]
     end
   end
 end
